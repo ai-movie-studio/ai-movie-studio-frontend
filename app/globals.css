@@ -45,6 +45,38 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  --animate-first: first 20s infinite;
+  --animate-second: second 20s infinite;
+  --animate-third: third 30s infinite;
+  --animate-fourth: fourth 20s infinite;
+  --animate-fifth: fifth 20s infinite;
+
+  @keyframes first {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(3%, -5%); }
+    100% { transform: translate(0, 0); }
+  }
+  @keyframes second {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-5%, 10%) rotate(180deg); }
+    100% { transform: translate(0, 0) rotate(360deg); }
+  }
+  @keyframes third {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(10%, 5%) rotate(-180deg); }
+    100% { transform: translate(0, 0) rotate(-360deg); }
+  }
+  @keyframes fourth {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(-10%, -10%); }
+    100% { transform: translate(0, 0); }
+  }
+  @keyframes fifth {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(10%, 10%); }
+    100% { transform: translate(0, 0); }
+  }
 }
 
 :root {
