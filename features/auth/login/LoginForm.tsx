@@ -16,9 +16,14 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { Separator } from "@/components/ui/separator"
 
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { MOCK_USERS } from "@/lib/data"
+import { toast } from "@/app/store/toast-store"
 
 export default function LoginForm() {
+  const router = useRouter()
   const isMobile = useIsMobile()
   const { isLoading, setLoading } = useUIStore()
   const { register, handleSubmit, formState: { errors } } = useForm<LoginTypes>({
@@ -32,11 +37,20 @@ export default function LoginForm() {
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
       console.log("Login data:", data)
-      // Here you would call your actual login API
+      
+      const user = MOCK_USERS.find(u => u.email === data.email && u.password === data.password);
+
+      if (user) {
+        toast.success(`Welcome back, ${user.name}!`);
+        router.push("/projects")
+      } else {
+        toast.error("Invalid email or password. Hint: use test@example.com");
+      }
     } catch (error) {
       console.error("Login failed:", error)
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
-      setLoading(false) // stop loading
+      setLoading(false)
     }
   }
 

@@ -15,8 +15,11 @@ import { BackgroundGradientAnimation } from "@/components/ui/background-gradient
 import Link from "next/link"
 import { Separator } from "@/components/ui/separator"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useRouter } from "next/navigation"
+import { toast } from "@/app/store/toast-store"
 
 export default function SignUpForm() {
+  const router = useRouter()
   const isMobile = useIsMobile()
   const { isLoading, setLoading } = useUIStore()
   const { register, handleSubmit, formState: { errors } } = useForm<SignUpTypes>({
@@ -30,9 +33,14 @@ export default function SignUpForm() {
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
       console.log("Signup data:", data)
-      // Here you would call your actual signup API
+
+      toast.success("Account created successfully! Please sign in.");
+
+      // Mock signup success
+      router.push("/login")
     } catch (error) {
       console.error("Signup failed:", error)
+      toast.error("Failed to create account. Please try again.");
     } finally {
       setLoading(false)
     }
@@ -48,7 +56,7 @@ export default function SignUpForm() {
         />
       </div>
 
-      <BackgroundSplit 
+      <BackgroundSplit
         className="min-h-screen"
         splitClassName="bg-white"
         variant="diagonal"
