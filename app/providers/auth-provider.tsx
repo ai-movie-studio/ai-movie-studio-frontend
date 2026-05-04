@@ -15,6 +15,7 @@ type AuthContextType = {
   isLoading: boolean;
   isLoggedIn: boolean;
   refreshSession: () => Promise<void>;
+  login: (values: { email: string; password: string }) => Promise<void>; // This was declared...
   logout: () => Promise<void>;
 };
 
@@ -44,14 +45,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await fetchUser();
   };
 
+  // 1. ADD THE LOGIN FUNCTION HERE
+  const login = async (values: { email: string; password: string }) => {
+    const res = await apiClient.post(endpoints.auth.login, values);
+    setUser(res.data); // Assuming your login endpoint returns user data
+  };
+
   const logout = async () => {
     try {
       await apiClient.post(endpoints.auth.logout);
     } catch {
-      // ignore API logout failure and still clear local auth state
+      // ignore API logout failure
     } finally {
       setUser(null);
-
       if (typeof window !== "undefined") {
         window.location.href = "/login";
       }
@@ -64,9 +70,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isLoading,
       isLoggedIn: !!user,
       refreshSession,
+      login, // 2. ADD IT TO THE VALUE OBJECT HERE
       logout,
     }),
-    [user, isLoading],
+    [user, isLoading], // Note: You don't need to add login here unless it changes (it's stable)
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
