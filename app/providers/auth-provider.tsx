@@ -15,7 +15,8 @@ type AuthContextType = {
   isLoading: boolean;
   isLoggedIn: boolean;
   refreshSession: () => Promise<void>;
-  login: (values: { email: string; password: string }) => Promise<void>; // This was declared...
+  login: (values: { email: string; password: string }) => Promise<void>;
+  register: (values: any) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -48,7 +49,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // 1. ADD THE LOGIN FUNCTION HERE
   const login = async (values: { email: string; password: string }) => {
     const res = await apiClient.post(endpoints.auth.login, values);
-    setUser(res.data); // Assuming your login endpoint returns user data
+    setUser(res.data);
+  };
+
+  const register = async (values: any) => {
+    const res = await apiClient.post(endpoints.auth.register, values);
+    setUser(res.data);
   };
 
   const logout = async () => {
@@ -70,7 +76,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isLoading,
       isLoggedIn: !!user,
       refreshSession,
-      login, // 2. ADD IT TO THE VALUE OBJECT HERE
+      login,
+      register,
       logout,
     }),
     [user, isLoading], // Note: You don't need to add login here unless it changes (it's stable)
