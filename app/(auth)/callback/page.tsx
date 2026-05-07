@@ -44,9 +44,7 @@ function CallbackHandler() {
       role: params.get("role") ?? "USER",
     });
 
-    // Clean URL and navigate
-    window.history.replaceState({}, "", "/callback");
-    router.push("/projects");
+    window.location.href = "/projects";
   }, [params, router]);
 
   if (error) {
