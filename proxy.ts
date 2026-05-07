@@ -1,29 +1,22 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+/**
+ * Next.js 16 proxy.
+ *
+ * NOTE: Auth cookies are HttpOnly and live on the backend domain (Railway),
+ * NOT on the Vercel frontend domain. This means we cannot check auth
+ * server-side from this proxy — the cookies are invisible to it.
+ *
+ * Authentication enforcement happens client-side in:
+ *   - AuthProvider (calls /v1/auth/me on mount with credentials)
+ *   - (dashboard)/layout.tsx (redirects unauthenticated users)
+ */
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 👉 Accept multiple possible cookie names
-  const hasToken =
-    request.cookies.has("ams_access_token") ||
-    request.cookies.has("access_token");
-
-  // Redirect dashboard → projects
+  // Redirect legacy /dashboard path to /projects
   if (pathname === "/dashboard") {
-    return NextResponse.redirect(new URL("/projects", request.url));
-  }
-
-  const isProtected =
-    pathname.startsWith("/projects") || pathname === "/settings";
-
-  // 👉 Block protected routes
-  if (!hasToken && isProtected) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  // 👉 Prevent logged-in users from seeing auth pages
-  if (hasToken && (pathname === "/login" || pathname === "/register")) {
     return NextResponse.redirect(new URL("/projects", request.url));
   }
 
@@ -31,11 +24,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/dashboard",
-    "/projects/:path*",
-    "/settings",
-    "/login",
-    "/register",
-  ],
+  matcher: ["/dashboard"],
 };
